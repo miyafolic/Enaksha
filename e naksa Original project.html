@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>e-Naksha | Sketch Your Dream</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Reset & Base Settings */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background-color: #f4f6f9; overflow-x: hidden; padding-bottom: 80px; }
+
+    /* =========================================
+       1. ORIGINAL SPLASH SCREEN
+       ========================================= */
+    #splash-screen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+      background-color: #ffffff; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; z-index: 9999;
+      transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1), opacity 1s;
+    }
+    .intro-container { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .intro-house-svg { width: 120px; height: auto; margin-bottom: 15px; }
+    .intro-layer-blue { opacity: 0; transform: translateY(-25px); animation: dropIn 0.6s forwards 0.3s; }
+    .intro-layer-orange { opacity: 0; transform: translateY(-25px); animation: dropIn 0.6s forwards 0.8s; }
+    .intro-text { display: flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-size: 4rem; font-weight: 700; line-height: 1; }
+    .intro-e { color: #eb6923; opacity: 0; animation: fadeIn 0.5s forwards 1.3s; }
+    .intro-dash { color: #5c5c5c; opacity: 0; margin: 0 5px; animation: fadeIn 0.5s forwards 1.6s; }
+    .intro-naksha { color: #4b7dbd; opacity: 0; animation: slideRight 0.5s forwards 1.9s; }
+    .intro-slogan { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; color: #5c5c5c; margin-top: 10px; opacity: 0; transform: translateY(20px); animation: fadeInUp 0.5s forwards 2.5s; letter-spacing: 1px; }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes dropIn { to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* =========================================
+       2. ORIGINAL HEADER & SIDE MENU
+       ========================================= */
+    header {
+      position: fixed; top: 0; left: 0; width: 100%; height: 75px;
+      background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      display: none; justify-content: space-between; align-items: center;
+      padding: 0 5%; z-index: 1000;
+    }
+    .header-logo-text { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; font-weight: 700; }
+
+    .side-menu {
+      position: fixed; top: 0; right: -280px; width: 280px; height: 100vh;
+      background: #ffffff; z-index: 2000; transition: 0.4s; padding: 30px 20px;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    }
+    .side-menu.active { right: 0; }
+    .menu-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+      background: rgba(0,0,0,0.5); z-index: 1500; display: none;
+    }
+    .menu-overlay.active { display: block; }
+
+    /* =========================================
+       3. AUTH & PROFILE UI
+       ========================================= */
+    .auth-container {
+      background: #ffffff; padding: 30px; border-radius: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-top: 20px;
+      text-align: center;
+    }
+    .auth-title { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 25px; }
+    .input-group { position: relative; margin-bottom: 15px; }
+    .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #4b7dbd; }
+    .input-group input {
+      width: 100%; padding: 15px 15px 15px 45px; border-radius: 12px;
+      border: 1.5px solid #eee; font-family: 'Poppins', sans-serif; outline: none;
+    }
+    .auth-btn {
+      width: 100%; padding: 15px; border-radius: 12px; border: none;
+      background: #eb6923; color: white; font-weight: 600; cursor: pointer;
+    }
+    .profile-card { background: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .logout-btn { background: #ff4444; color: white; border: none; padding: 12px 25px; border-radius: 10px; margin-top: 20px; cursor: pointer; font-weight: 600; }
+
+    /* =========================================
+       4. SECTIONS
+       ========================================= */
+    .content-section { padding: 95px 20px 20px; display: none; }
+    .active-section { display: block; }
+    .service-card {
+      background: #ffffff; padding: 30px; border-radius: 20px; text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-bottom: 5px solid #eb6923;
+      margin-bottom: 20px; cursor: pointer;
+    }
+    .service-card i { font-size: 3.5rem; color: #4b7dbd; margin-bottom: 15px; }
+    .portfolio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+    .portfolio-item { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 1/1; }
+    .portfolio-item img { width: 100%; height: 100%; object-fit: cover; }
+    .portfolio-label { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.7); color: white; padding: 8px; text-align: center; }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+      background: #ffffff; display: flex; justify-content: space-around;
+      align-items: center; box-shadow: 0 -2px 15px rgba(0,0,0,0.1); z-index: 2000;
+    }
+    .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #5c5c5c; font-size: 0.75rem; cursor: pointer; }
+    .nav-item.active { color: #eb6923; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div id="splash-screen">
+    <div class="intro-container">
+      <svg class="intro-house-svg" viewBox="0 0 120 100">
+        <path class="intro-layer-orange" d="M 60 30 L 95 65 V 95 H 75 V 70 H 55 V 95 H 40 V 50 Z" fill="#eb6923" />
+        <path class="intro-layer-blue" d="M 15 70 L 60 25 L 85 50 L 70 65 L 60 55 L 35 80 Z" fill="#4b7dbd" />
+      </svg>
+      <div class="intro-text">
+        <span class="intro-e">e</span><span class="intro-dash">-</span><span class="intro-naksha">Naksha</span>
+      </div>
+      <div class="intro-slogan">Sketch Your Dream</div>
+    </div>
+  </div>
+
+  <header id="main-header">
+    <div class="header-logo-text">
+      <span style="color: #eb6923;">e</span><span style="color: #5c5c5c;">-</span><span style="color: #4b7dbd;">Naksha</span>
+    </div>
+    <div onclick="toggleMenu()" style="cursor:pointer;"><i class="fa-solid fa-bars-staggered" style="font-size: 1.6rem; color: #5c5c5c;"></i></div>
+  </header>
+
+  <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+  <div class="side-menu" id="sideMenu">
+    <div onclick="toggleMenu()" style="text-align:right; cursor:pointer;"><i class="fa-solid fa-xmark fa-2xl"></i></div>
+    <ul style="list-style:none; margin-top:30px;">
+        <li style="padding:15px 0; border-bottom:1px solid #eee;" onclick="switchTab(null, 'home'); toggleMenu()">Home</li>
+        <li style="padding:15px 0; border-bottom:1px solid #eee;" onclick="switchTab(null, 'service'); toggleMenu()">Services</li>
+    </ul>
+  </div>
+
+  <div id="home" class="content-section active-section">
+    <h3>Portfolio</h3>
+    <div class="portfolio-grid">
+        <div class="portfolio-item"><img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400"><div class="portfolio-label">Duplex Home</div></div>
+        <div class="portfolio-item"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400"><div class="portfolio-label">3D Elevation</div></div>
+    </div>
+  </div>
+
+  <div id="service" class="content-section">
+    <div class="service-card" onclick="checkAuthAndProceed('2D Plan Form')">
+        <i class="fa-solid fa-ruler-combined"></i>
+        <h3>2D Layout Plan</h3>
+    </div>
+    <div class="service-card" onclick="checkAuthAndProceed('3D Elevation Form')">
+        <i class="fa-solid fa-cube"></i>
+        <h3>3D Elevation</h3>
+    </div>
+  </div>
+
+  <div id="order" class="content-section"><h2>Orders</h2><p>No orders yet.</p></div>
+
+  <div id="profile" class="content-section">
+    <div id="logged-out-view">
+        <div id="login-form" class="auth-container">
+          <div class="auth-title"><span style="color:#eb6923">Login</span> Account</div>
+          <div class="input-group"><i class="fa-solid fa-envelope"></i><input type="email" id="loginEmail" placeholder="Email"></div>
+          <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="loginPass" placeholder="Password"></div>
+          <p style="text-align:right; font-size:0.8rem; margin-bottom:10px;"><a href="javascript:void(0)" onclick="forgotPass()" style="color:#4b7dbd;">Forgot Password?</a></p>
+          <button class="auth-btn" id="btnLogin">LOGIN</button>
+          <p style="margin-top:20px;">New user? <a href="javascript:void(0)" onclick="showSignup()" style="color:#4b7dbd;">Signup</a></p>
+        </div>
+
+        <div id="signup-form" class="auth-container" style="display:none;">
+          <div class="auth-title"><span style="color:#eb6923">Sign</span> Up</div>
+          <div class="input-group"><i class="fa-solid fa-user"></i><input type="text" id="regName" placeholder="Full Name"></div>
+          <div class="input-group"><i class="fa-solid fa-envelope"></i><input type="email" id="regEmail" placeholder="Email Address"></div>
+          <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="regPass" placeholder="Password"></div>
+          <button class="auth-btn" id="btnSignup">REGISTER</button>
+          <p style="margin-top:20px;"><a href="javascript:void(0)" onclick="showLogin()" style="color:#4b7dbd;">Back to Login</a></p>
+        </div>
+    </div>
+
+    <div id="logged-in-view" style="display:none;">
+        <div class="profile-card">
+            <div style="width:80px; height:80px; background:#eb6923; border-radius:50%; margin: 0 auto 15px; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:bold;" id="user-initial">U</div>
+            <h2 id="display-name">User Name</h2>
+            <p id="display-email" style="color:#5c5c5c;">user@mail.com</p>
+            <button class="logout-btn" id="btnLogout">LOGOUT</button>
+        </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab(this, 'home')"><i class="fa-solid fa-house"></i><span>Home</span></div>
+    <div class="nav-item" onclick="switchTab(this, 'service')"><i class="fa-solid fa-screwdriver-wrench"></i><span>Service</span></div>
+    <div class="nav-item" onclick="switchTab(this, 'order')"><i class="fa-solid fa-cart-shopping"></i><span>Order</span></div>
+    <div class="nav-item" onclick="switchTab(this, 'profile')"><i class="fa-solid fa-user"></i><span>Profile</span></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyARmOCO4APamzc8wuUlp5rEgPH8hZUMX6U",
+      authDomain: "enkasha-99c34.firebaseapp.com",
+      projectId: "enkasha-99c34",
+      storageBucket: "enkasha-99c34.firebasestorage.app",
+      messagingSenderId: "759836461630",
+      appId: "1:759836461630:web:30cc76c2c1075a3df99f6f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    let userLoggedIn = false;
+
+    // UI Logic
+    window.onload = () => {
+      setTimeout(() => {
+        document.getElementById('splash-screen').style.transform = 'translateY(-100vh)';
+        setTimeout(() => { 
+            document.getElementById('splash-screen').style.display = 'none';
+            document.getElementById('main-header').style.display = 'flex';
+        }, 800);
+      }, 4200);
+    };
+
+    window.switchTab = (el, id) => {
+      document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
+      document.getElementById(id).classList.add('active-section');
+      if(el) {
+          document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+          el.classList.add('active');
+      }
+    };
+
+    window.toggleMenu = () => {
+      document.getElementById('sideMenu').classList.toggle('active');
+      document.getElementById('menuOverlay').classList.toggle('active');
+    };
+
+    window.showSignup = () => { document.getElementById('login-form').style.display='none'; document.getElementById('signup-form').style.display='block'; };
+    window.showLogin = () => { document.getElementById('login-form').style.display='block'; document.getElementById('signup-form').style.display='none'; };
+
+    // Auth Engine
+    document.getElementById('btnSignup').addEventListener('click', () => {
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const pass = document.getElementById('regPass').value;
+        if(!name || !email || !pass) return alert("Pura details bhariye!");
+        
+        createUserWithEmailAndPassword(auth, email, pass)
+          .then((userCredential) => {
+            updateProfile(userCredential.user, { displayName: name });
+            alert("Signup Success! Ab Login Karein.");
+            showLogin();
+          }).catch(e => alert(e.message));
+    });
+
+    document.getElementById('btnLogin').addEventListener('click', () => {
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPass').value;
+        signInWithEmailAndPassword(auth, email, pass)
+          .then(() => switchTab(document.querySelectorAll('.nav-item')[0], 'home'))
+          .catch(e => alert("Login Failed: " + e.message));
+    });
+
+    document.getElementById('btnLogout').addEventListener('click', () => {
+        signOut(auth).then(() => switchTab(document.querySelectorAll('.nav-item')[3], 'profile'));
+    });
+
+    window.forgotPass = () => {
+        const email = document.getElementById('loginEmail').value;
+        if(!email) return alert("Pehle Email likhiye!");
+        sendPasswordResetEmail(auth, email).then(() => alert("Reset link email par bhej diya gaya hai!")).catch(e => alert(e.message));
+    };
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            userLoggedIn = true;
+            document.getElementById('logged-out-view').style.display = 'none';
+            document.getElementById('logged-in-view').style.display = 'block';
+            document.getElementById('display-name').innerText = user.displayName || "User";
+            document.getElementById('display-email').innerText = user.email;
+            document.getElementById('user-initial').innerText = (user.displayName || "U").charAt(0).toUpperCase();
+        } else {
+            userLoggedIn = false;
+            document.getElementById('logged-out-view').style.display = 'block';
+            document.getElementById('logged-in-view').style.display = 'none';
+        }
+    });
+
+    // Modified function to remove alert and redirect directly
+    window.checkAuthAndProceed = (form) => {
+        if(!userLoggedIn) {
+            // Direct switch to profile tab if not logged in
+            switchTab(document.querySelectorAll('.nav-item')[3], 'profile');
+        } else {
+            alert("Aapka " + form + " khul raha hai...");
+        }
+    };
+  </script>
+</body>
+</html>
+
